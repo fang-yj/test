@@ -3,7 +3,7 @@ name: Update v2ray
 
 on:
   schedule:
-    - cron: '0/5 * * * *'
+    - cron: '* * * * *'
   workflow_dispatch:
     inputs:
       logLevel:
