@@ -2,6 +2,8 @@
 name: Update v2ray
 
 on:
+  schedule:
+    - cron: '0/5 * * * *'
   workflow_dispatch:
     inputs:
       logLevel:
@@ -10,8 +12,7 @@ on:
         default: 'warning'
       tags:
         description: 'test'
-  schedule:
-    - cron: '*/5 * * * *'
+  
     
 jobs:
   
