@@ -1,4 +1,4 @@
-# .github/workflows/sync.yml
+# .github/workflows/update_v2ray.yml
 name: Update v2ray
 
 on:
@@ -36,7 +36,7 @@ jobs:
             git config --global user.email fang-yj@qq.com
             git config --global user.name fang-yj
             git add .
-            git commit -m "每天 github actions 自动更新" -a
+            git commit -m "github actions 自动更新" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         env:
