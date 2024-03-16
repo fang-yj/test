@@ -5,8 +5,8 @@ on:
   repository_dispatch:
     types:
       - 'update_v2ray'
-  schedule:
-    - cron: '*/5 * * * *'
+  # schedule:
+  #   - cron: '*/5 * * * *'
   workflow_dispatch:
     # inputs:
     #   logLevel:
