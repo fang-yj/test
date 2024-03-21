@@ -34,16 +34,21 @@ jobs:
           pip install requests
       - name: 'Working'
         run: 
-            python3 ./main.py
+          python3 ./main.py
+      - name: config git info
+        run: |
+          git config --global user.email fang-yj@qq.com
+          git config --global user.name fang-yj
       - name: commit
         run: |
-            git config --global user.email fang-yj@qq.com
-            git config --global user.name fang-yj
-            git add .
-            git commit -m "github actions 自动更新" -a
+          git checkout master
+          git add .
+          git commit -m "github actions 自动更新" -a
       - name: Push changes
-        uses: ad-m/github-push-action@master
         env:
-            REPO: self
-            BRANCH: main
-            GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_LOGIN: fang-yj
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - run: |
+          git push https://$GITHUB_LOGIN:$GITHUB_TOKEN@github.com/fang-yj/test.git
+      - name: done
+        run: echo "done"
