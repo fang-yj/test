@@ -16,6 +16,6 @@ if __name__ == "__main__":
     r = re.findall(r"vmess(.*?)```",content)
     data = "vmess" + r[0][:-4]
     # print(list(data.split(r"\n")))
-    list_data = list(data.split(r"\n"))
+    list_data = list(data.split(r"\r\n"))
     with open("v2ray.txt","w",encoding="utf-8") as f:
-        f.write("\n".join(list_data[0:len(list_data)-8])[0:-2])
+        f.write("\n".join(list_data[0:len(list_data)-8]))
