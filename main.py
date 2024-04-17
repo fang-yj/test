@@ -18,4 +18,4 @@ if __name__ == "__main__":
     # print(list(data.split(r"\n")))
     list_data = list(data.split(r"\n"))
     with open("v2ray.txt","w",encoding="utf-8") as f:
-        f.write("\n".join(list_data[0:len(list_data)-8]))
+        f.write("\n".join(list_data[0:len(list_data)-8][0:-2]))
