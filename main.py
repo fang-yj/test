@@ -8,7 +8,7 @@ import requests
 import json
 
 if __name__ == "__main__":
-    url = "https://raw.githubusercontent.com/tolinkshare/freenode/main/README.md"
+    url = "https://raw.githubusercontent.com/abshare/abshare.github.io/main/README.md"
     headers = {"accept": "application/vnd.github.v3+json"}
     resp = requests.get(url, headers)
     content = str(resp.content)
