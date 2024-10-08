@@ -1,0 +1,60 @@
+{
+    "payload":
+    {
+        "header_redesign_enabled": true,
+        "results":
+        [
+            {
+                "avatar_url": "https://avatars.githubusercontent.com/u/117757902?s=80&v=4",
+                "hl_login": "<em>mksshare</em>",
+                "hl_name": "",
+                "hl_profile_bio": "",
+                "followed_by_current_user": false,
+                "followers": 141,
+                "id": "117757902",
+                "is_current_user": false,
+                "location": null,
+                "login": "mksshare",
+                "display_login": "mksshare",
+                "name": null,
+                "profile_bio": null,
+                "sponsorable": false,
+                "repos": 1
+            }
+        ],
+        "type": "users",
+        "page": 1,
+        "page_count": 1,
+        "elapsed_millis": 56,
+        "errors":
+        [],
+        "result_count": 1,
+        "facets":
+        [],
+        "protected_org_logins":
+        [],
+        "topics": null,
+        "query_id": "",
+        "logged_in": true,
+        "sign_up_path": "/signup?source=code_search_results",
+        "sign_in_path": "/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dmksshare%26type%3Dusers",
+        "metadata": null,
+        "warn_limited_results": false,
+        "csrf_tokens":
+        {
+            "/sponsors/batch_deferred_sponsor_buttons":
+            {
+                "post": "357SwlTlzmgLm105QyoxIkJOzN9fX2T6lo00u4kio1hEIrmwp67UDopZaPWHLmPPeveWucygt9AOjm_1sYln8Q"
+            },
+            "/users/follow?target=mksshare":
+            {
+                "post": "UBoBhAVjlmg1p4MeeM-sxi313lwx4WudyrQuNqhCcHFyhYsEmPKeI5dHRGKIzF3fpllG-vvjrmLjE_NxMbAkTg"
+            },
+            "/users/unfollow?target=mksshare":
+            {
+                "post": "UtJHw-qYabFYjBG9intdAHwQjZFELD8oD5ly1uOP7fyEJulDydjgIfE6Hsdj8qVnSe9GAkLEojbdGsLckshJLQ"
+            }
+        }
+    },
+    "title": "User search results"
+}

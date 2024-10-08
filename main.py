@@ -1,21 +1,156 @@
 #!/usr/bin/env python3
 # coding    : utf-8
-# @Time     : 2024.3.5
+# @Time     : 2024.9.29
 # @Author   : fang-yj
 
+import base64
+import argparse
+import random
+import time
 import re
-import requests
+import requests as req
+from bs4 import BeautifulSoup
 import json
+from browser import Browser
+from selenium.webdriver.common.by import By
+
+SEARCH_HEADER = {'accept':'application/json','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
+ERROR_TIME = 0
+
+def search_repo_names_through_fuzzy_users(fuzzy_users:list)->list:
+    """
+        通过模糊用户名搜索获取 v2ray 订阅发布作者
+        参数:
+            fuzzy_users: 模糊用户名列表
+        返回:
+            repo_names: 一个列表
+    """
+    repo_names = []
+    # 请求标头
+    
+    for name in fuzzy_users:
+        search_url = f'https://github.com/search?q={name}&type=users'
+        resp = req.get(search_url,SEARCH_HEADER)
+        print(resp)
+        user = resp.get("payload").get("results")[0].get("login")
+        print(user)
+        return
+        repo_names.append(search_repo_for_name(user))
+
+    return repo_names
+
+def search_repo_for_name(name:str) -> str:
+    '''
+        通过发布者用户名获取 v2ary 订阅发布的仓库地址
+        参数:
+            name : 发布者用户名
+        返回:
+            full_name: 返回仓库名字
+    '''
+    # 获取发布作者发布的仓库地址
+    # https://api.github.com/users/mksshare/repos
+    url = f'https://api.github.com/users/{name}/repos'
+    resp = req.get(search_url,SEARCH_HEADER)
+    return resp[0].get("full_name")
+
+def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
+    """
+        通过仓库更新时间获取仓库地址
+        参数:
+            filter_words: 查找包含制定字符的仓库地址
+        返回:
+            repo_names: 查找到的仓库名字
+    """
+    global ERROR_TIME
+    url = "https://github.com/search?q=v2ray%E8%AE%A2%E9%98%85&type=repositories&s=updated&o=desc"
+    resp = req.get(url,SEARCH_HEADER)
+    # print(resp.status_code)
+    if resp.status_code == 200:
+        html_content = resp.text
+        soup = BeautifulSoup(html_content,'html.parser')
+        script_text = json.loads(soup.find('script', attrs={"data-target":"react-app.embeddedData"}).get_text())
+    elif ERROR_TIME < 3:
+        ERROR_TIME += 1
+        time.sleep(random.randint(5, 10))
+        search_repo_names_by_updated_desc()
+    else:
+        return []
+    repo_names = []
+    repo_list = script_text.get("payload").get("results")
+    for repo in repo_list:
+        repo_name = repo.get("hl_name")
+        has_issues = repo.get("repo").get("repository").get("has_issues")
+        if (any(filter_word in repo_name for filter_word in filter_words) 
+            and len(repo_names)<3 
+            and not has_issues):
+            repo_names.append(repo_name)
+    return repo_names
+
+def repo_readme_to_v2ray_url(repo_names:list):
+    """
+        根据仓库名称获取readme.md，解析 readme.md 获取 v2ray 订阅链接，
+        并将获取到的订阅信息保存到 v2ray.txt 中
+        参数:
+            repo_names: 仓库名称列表
+    """
+    if len(repo_names) == 0:
+        return
+    v2ray = ""
+    with Browser(args=argumentParser()) as desktopBrowser:
+        chrome = desktopBrowser.webdriver
+        for repo_name in repo_names:
+            time.sleep(random.randint(5, 10))
+            url = f"https://raw.githubusercontent.com/{repo_name}/main/README.md"
+            headers = {"accept": "application/vnd.github.v3+json",'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
+            resp_text = req.get(url, headers).text
+            # print(resp_text)
+            str_index = find_occurrences_regex(resp_text,"```")
+            print(resp_text[str_index[2]+3:str_index[3]])
+            # 获取需要的 url
+            v2ray_url = resp_text[str_index[2]+3:str_index[3]-2]
+            # 检查链接是否正确
+            if "https://" not in v2ray_url:
+                v2ray_url = v2ray_url.replace("https:/","https://")
+            # 使用 chrome 访问
+            chrome.get(v2ray_url)
+            time.sleep(3)
+            v2ray_text = chrome.find_element(By.TAG_NAME,"body").text;
+            print(v2ray_text)
+            if "403 Forbidden" in v2ray_text:
+                continue
+            v2ray += base64.b64decode(v2ray_text).decode("utf-8")
+        # print(v2ray.split("\r\n"))
+        desktopBrowser.closeBrowser()
+    with open("v2ray.txt","w",encoding="utf-8") as f:
+        f.write("\n".join(v2ray.split("\r\n")))
+
+def find_occurrences_regex(text:str, pattern:str)->list:
+    """
+        到 text 查找 pattern 所有出现位置
+        参数：
+            text: 原始字符串
+            pattern: 要查找的字符串
+        返回：
+            occurrences: pattern 所有出现位置
+    """
+    occurrences = [match.start() for match in re.finditer(pattern, text)]
+    return occurrences
+
+def argumentParser():
+    parser = argparse.ArgumentParser(description="test")
+    parser.add_argument(
+        "-v", "--visible", action="store_true", help="Optional: Visible browser"
+    )
+    parser.add_argument(
+        "-l", "--lang", type=str, default="zh", help="Optional: Language (ex: en)"
+    )
+    parser.add_argument(
+        "-g", "--geo", type=str, default="CN", help="Optional: Geolocation (ex: US)"
+    )
+    return parser.parse_args()
 
 if __name__ == "__main__":
-    url = "https://raw.githubusercontent.com/abshare/abshare.github.io/main/README.md"
-    headers = {"accept": "application/vnd.github.v3+json"}
-    resp = requests.get(url, headers)
-    content = str(resp.content)
-    # r = data[10:-5]
-    r = re.findall(r"```\\r\\nss:(.*?)\\r\\n```",content)
-    data = "ss:" + r[0]
-    # print(list(data.split(r"\n")))
-    list_data = list(data.split(r"\r\n"))
-    with open("v2ray.txt","w",encoding="utf-8") as f:
-        f.write("\n".join(list_data))
+    fuzzy_users = ['tolinkshare','mksshare']
+    # search_repo_names_through_fuzzy_users(fuzzy_users);
+    repo_names = search_repo_names_by_updated_desc()
+    repo_readme_to_v2ray_url(repo_names)
