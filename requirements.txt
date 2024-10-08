@@ -2,4 +2,4 @@ requests
 selenium
 urllib3
 ipapi
-
+beautifulsoup4
