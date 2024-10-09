@@ -63,21 +63,26 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
     global ERROR_TIME
     url = "https://github.com/search?q=v2ray%E8%AE%A2%E9%98%85&type=repositories&s=updated&o=desc"
     resp = req.get(url,SEARCH_HEADER)
+    print(f"status_code:{resp.status_code}")
+    repo_list = []
     # print(resp.status_code)
     if resp.status_code == 200:
         html_content = resp.text
         soup = BeautifulSoup(html_content,'html.parser')
         script_text = json.loads(soup.find('script', attrs={"data-target":"react-app.embeddedData"}).get_text())
-    elif ERROR_TIME < 3:
+        # print(f"script_text:{script_text}")
+        repo_list = script_text.get("payload").get("results")
+        print(f"repo_list:{repo_list}")
+    elif ERROR_TIME < 2:
         ERROR_TIME += 1
-        time.sleep(random.randint(5, 10))
+        time.sleep(random.randint(15, 30))
         search_repo_names_by_updated_desc()
     else:
         return []
     repo_names = []
-    repo_list = script_text.get("payload").get("results")
     for repo in repo_list:
         repo_name = repo.get("hl_name")
+        # print(f"repo_name:{repo_name}")
         has_issues = repo.get("repo").get("repository").get("has_issues")
         if (any(filter_word in repo_name for filter_word in filter_words) 
             and len(repo_names)<3 
@@ -93,6 +98,7 @@ def repo_readme_to_v2ray_url(repo_names:list):
             repo_names: 仓库名称列表
     """
     if len(repo_names) == 0:
+        print("为查询到符合的仓库")
         return
     v2ray = ""
     with Browser(args=argumentParser()) as desktopBrowser:
