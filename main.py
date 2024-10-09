@@ -3,6 +3,7 @@
 # @Time     : 2024.9.29
 # @Author   : fang-yj
 
+import os
 import base64
 import argparse
 import random
@@ -26,8 +27,6 @@ def search_repo_names_through_fuzzy_users(fuzzy_users:list)->list:
             repo_names: 一个列表
     """
     repo_names = []
-    # 请求标头
-    
     for name in fuzzy_users:
         search_url = f'https://github.com/search?q={name}&type=users'
         resp = req.get(search_url,SEARCH_HEADER)
@@ -115,14 +114,34 @@ def repo_readme_to_v2ray_url(repo_names:list):
             chrome.get(v2ray_url)
             time.sleep(3)
             v2ray_text = chrome.find_element(By.TAG_NAME,"body").text;
-            print(v2ray_text)
+            # print(v2ray_text)
             if "403 Forbidden" in v2ray_text:
                 continue
             v2ray += base64.b64decode(v2ray_text).decode("utf-8")
         # print(v2ray.split("\r\n"))
         desktopBrowser.closeBrowser()
-    with open("v2ray.txt","w",encoding="utf-8") as f:
-        f.write("\n".join(v2ray.split("\r\n")))
+    if os.path.exists("v2ray.txt"):
+        print("文件存在，判断要保存的内容是否更新，如果更新就保存")
+        new_v2ray = v2ray.split("\r\n")
+        old_v2ray = readFile("v2ray.txt")
+        if set(new_v2ray) != set(old_v2ray):
+            print("数据发生变更，更新数据并保存")
+            saveFile(new_v2ray,"v2ray.txt")
+    else:
+        print("文件不存在，直接创建 v2ray.txt 并保存")
+        saveFile(new_v2ray,"v2ray.txt")
+
+def saveFile(data: list, file_name: str):
+    with open(file_name, "w", encoding="utf-8") as f:
+        f.write("\n".join(data))
+
+def readFile(file_name: str) -> list:
+    try:
+        with open(file_name, 'r', encoding='utf-8') as f:
+            return eval(f.read())
+    except:
+        with open(file_name, 'r', encoding='utf-8') as f:
+            return f.read().splitlines()
 
 def find_occurrences_regex(text:str, pattern:str)->list:
     """
@@ -154,3 +173,4 @@ if __name__ == "__main__":
     # search_repo_names_through_fuzzy_users(fuzzy_users);
     repo_names = search_repo_names_by_updated_desc()
     repo_readme_to_v2ray_url(repo_names)
+    # print(readFile("v2ray.txt"))
