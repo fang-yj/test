@@ -14,8 +14,16 @@ from bs4 import BeautifulSoup
 import json
 from browser import Browser
 from selenium.webdriver.common.by import By
+from constants import desktopUserAgent
 
-SEARCH_HEADER = {'accept':'application/json','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
+USER_AGENT = desktopUserAgent()
+
+SEARCH_HEADER = {
+    'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'accept-encoding':'gzip, deflate, br, zstd',
+    'accept-language':'zh-CN,zh;q=0.9,en;q=0.8',
+    'user-agent':USER_AGENT
+}
 ERROR_TIME = 0
 
 def search_repo_names_through_fuzzy_users(fuzzy_users:list)->list:
@@ -106,7 +114,7 @@ def repo_readme_to_v2ray_url(repo_names:list):
         for repo_name in repo_names:
             time.sleep(random.randint(5, 10))
             url = f"https://raw.githubusercontent.com/{repo_name}/main/README.md"
-            headers = {"accept": "application/vnd.github.v3+json",'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
+            headers = {"accept": "application/vnd.github.v3+json",'user-agent':USER_AGENT}
             resp_text = req.get(url, headers).text
             # print(resp_text)
             str_index = find_occurrences_regex(resp_text,"```")
