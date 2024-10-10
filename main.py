@@ -96,18 +96,24 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
             and len(repo_names)<3 
             and not has_issues):
             repo_names.append(repo_name)
-    
-    if len(repo_names) == 0:
-        print("为查询到符合的仓库,使用默认仓库")
     return repo_names
 
-def repo_readme_to_v2ray_url(repo_names=["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]):
+def repo_readme_to_v2ray_url(repo_names:list):
     """
         根据仓库名称获取readme.md，解析 readme.md 获取 v2ray 订阅链接，
         并将获取到的订阅信息保存到 v2ray.txt 中
         参数:
             repo_names: 仓库名称列表
     """
+    if len(repo_names) != 0:
+        saveFile(repo_names,"repo_names.txt")
+    else:
+        print("为查询到符合的仓库")
+        if os.path.exists("repo_names.txt"):
+            print("使用备份的仓库名")
+            repo_names = readFile("repo_names.txt")
+        else:
+            repo_names = ["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]
     v2ray = ""
     with Browser(args=argumentParser()) as desktopBrowser:
         chrome = desktopBrowser.webdriver
@@ -134,9 +140,9 @@ def repo_readme_to_v2ray_url(repo_names=["abshare/abshare.github.io","tolinkshar
             v2ray += base64.b64decode(v2ray_text).decode("utf-8")
         # print(v2ray.split("\r\n"))
         desktopBrowser.closeBrowser()
+    new_v2ray = v2ray.split("\r\n")
     if os.path.exists("v2ray.txt"):
         print("文件存在，判断要保存的内容是否更新，如果更新就保存")
-        new_v2ray = v2ray.split("\r\n")
         old_v2ray = readFile("v2ray.txt")
         if set(new_v2ray) != set(old_v2ray):
             print("数据发生变更，更新数据并保存")
