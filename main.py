@@ -96,18 +96,18 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
             and len(repo_names)<3 
             and not has_issues):
             repo_names.append(repo_name)
+    
+    if len(repo_names) == 0:
+        print("为查询到符合的仓库,使用默认仓库")
     return repo_names
 
-def repo_readme_to_v2ray_url(repo_names:list):
+def repo_readme_to_v2ray_url(repo_names=["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]):
     """
         根据仓库名称获取readme.md，解析 readme.md 获取 v2ray 订阅链接，
         并将获取到的订阅信息保存到 v2ray.txt 中
         参数:
             repo_names: 仓库名称列表
     """
-    if len(repo_names) == 0:
-        print("为查询到符合的仓库")
-        return
     v2ray = ""
     with Browser(args=argumentParser()) as desktopBrowser:
         chrome = desktopBrowser.webdriver
