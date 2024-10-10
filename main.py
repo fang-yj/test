@@ -124,13 +124,14 @@ def repo_readme_to_v2ray_url(repo_names:list):
             resp_text = req.get(url, headers).text
             # print(resp_text)
             str_index = find_occurrences_regex(resp_text,"```")
-            print(resp_text[str_index[2]+3:str_index[3]])
+            # print(resp_text[str_index[2]+3:str_index[3]])
             # 获取需要的 url
             v2ray_url = resp_text[str_index[2]+3:str_index[3]-2]
             # 检查链接是否正确
             if "https://" not in v2ray_url:
                 v2ray_url = v2ray_url.replace("https:/","https://")
             # 使用 chrome 访问
+            print(v2ray_url)
             chrome.get(v2ray_url)
             time.sleep(3)
             v2ray_text = chrome.find_element(By.TAG_NAME,"body").text;
