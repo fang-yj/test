@@ -4,7 +4,6 @@
 # @Author   : fang-yj
 
 import os
-import sys
 import base64
 import argparse
 import random
@@ -18,11 +17,12 @@ from selenium.webdriver.common.by import By
 from constants import desktopUserAgent
 
 USER_AGENT = desktopUserAgent()
-GITHUB_TOKEN = ''
+
 SEARCH_HEADER = {
     'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'Authorization':GITHUB_TOKEN,
-    'user-agent':USER_AGENT,
+    'accept-encoding':'gzip, deflate, br, zstd',
+    'accept-language':'zh-CN,zh;q=0.9,en;q=0.8',
+    'user-agent':USER_AGENT
 }
 ERROR_TIME = 0
 
@@ -105,26 +105,22 @@ def repo_readme_to_v2ray_url(repo_names:list):
         参数:
             repo_names: 仓库名称列表
     """
-    global GITHUB_TOKEN
     if len(repo_names) != 0:
         saveFile(repo_names,"repo_names.txt")
-    elif os.path.exists("repo_names.txt"):
-        print("为查询到符合的仓库，使用备份的仓库名")
-        repo_names = readFile("repo_names.txt")
     else:
-        print("为查询到备份的仓库名，使用默认的仓库名")
-        repo_names = ["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]
+        print("为查询到符合的仓库")
+        if os.path.exists("repo_names.txt"):
+            print("使用备份的仓库名")
+            repo_names = readFile("repo_names.txt")
+        else:
+            repo_names = ["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]
     v2ray = ""
     with Browser(args=argumentParser()) as desktopBrowser:
         chrome = desktopBrowser.webdriver
         for repo_name in repo_names:
             time.sleep(random.randint(5, 10))
             url = f"https://raw.githubusercontent.com/{repo_name}/main/README.md"
-            headers = {
-                "accept": "application/vnd.github.v3+json",
-                'Authorization':GITHUB_TOKEN,
-                'user-agent':USER_AGENT,
-            }
+            headers = {"accept": "application/vnd.github.v3+json",'user-agent':USER_AGENT}
             resp_text = req.get(url, headers).text
             # print(resp_text)
             str_index = find_occurrences_regex(resp_text,"```")
@@ -194,9 +190,7 @@ def argumentParser():
     return parser.parse_args()
 
 if __name__ == "__main__":
-    GITHUB_TOKEN = sys.argv[1]
-    print(GITHUB_TOKEN)
-    fuzzy_users = ['tolinkshare','mksshare','abshare']
+    fuzzy_users = ['tolinkshare','mksshare']
     # search_repo_names_through_fuzzy_users(fuzzy_users);
     repo_names = search_repo_names_by_updated_desc()
     repo_readme_to_v2ray_url(repo_names)
