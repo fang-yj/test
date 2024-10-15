@@ -4,6 +4,7 @@
 # @Author   : fang-yj
 
 import os
+import sys
 import base64
 import argparse
 import random
@@ -17,12 +18,11 @@ from selenium.webdriver.common.by import By
 from constants import desktopUserAgent
 
 USER_AGENT = desktopUserAgent()
-
+GITHUB_TOKEN = ''
 SEARCH_HEADER = {
     'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'accept-encoding':'gzip, deflate, br, zstd',
-    'accept-language':'zh-CN,zh;q=0.9,en;q=0.8',
-    'user-agent':USER_AGENT
+    'Authorization':GITHUB_TOKEN,
+    'user-agent':USER_AGENT,
 }
 ERROR_TIME = 0
 
@@ -119,7 +119,11 @@ def repo_readme_to_v2ray_url(repo_names:list):
         for repo_name in repo_names:
             time.sleep(random.randint(5, 10))
             url = f"https://raw.githubusercontent.com/{repo_name}/main/README.md"
-            headers = {"accept": "application/vnd.github.v3+json",'user-agent':USER_AGENT}
+            headers = {
+                "accept": "application/vnd.github.v3+json",
+                'Authorization':GITHUB_TOKEN,
+                'user-agent':USER_AGENT,
+            }
             resp_text = req.get(url, headers).text
             # print(resp_text)
             str_index = find_occurrences_regex(resp_text,"```")
@@ -189,6 +193,8 @@ def argumentParser():
     return parser.parse_args()
 
 if __name__ == "__main__":
+    global GITHUB_TOKEN
+    GITHUB_TOKEN = sys.argv[1]
     fuzzy_users = ['tolinkshare','mksshare','abshare']
     # search_repo_names_through_fuzzy_users(fuzzy_users);
     repo_names = search_repo_names_by_updated_desc()
