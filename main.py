@@ -81,10 +81,10 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
         # print(f"script_text:{script_text}")
         repo_list = script_text.get("payload").get("results")
         print(f"repo_list:{repo_list}")
-    elif ERROR_TIME < 2:
-        ERROR_TIME += 1
-        time.sleep(random.randint(15, 30))
-        search_repo_names_by_updated_desc()
+    # elif ERROR_TIME < 2:
+    #     ERROR_TIME += 1
+    #     time.sleep(random.randint(15, 30))
+    #     search_repo_names_by_updated_desc()
     else:
         return []
     repo_names = []
