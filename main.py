@@ -105,6 +105,7 @@ def repo_readme_to_v2ray_url(repo_names:list):
         参数:
             repo_names: 仓库名称列表
     """
+    global GITHUB_TOKEN
     if len(repo_names) != 0:
         saveFile(repo_names,"repo_names.txt")
     elif os.path.exists("repo_names.txt"):
