@@ -107,13 +107,12 @@ def repo_readme_to_v2ray_url(repo_names:list):
     """
     if len(repo_names) != 0:
         saveFile(repo_names,"repo_names.txt")
+    elif os.path.exists("repo_names.txt"):
+        print("为查询到符合的仓库，使用备份的仓库名")
+        repo_names = readFile("repo_names.txt")
     else:
-        print("为查询到符合的仓库")
-        if os.path.exists("repo_names.txt"):
-            print("使用备份的仓库名")
-            repo_names = readFile("repo_names.txt")
-        else:
-            repo_names = ["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]
+        print("为查询到备份的仓库名，使用默认的仓库名")
+        repo_names = ["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]
     v2ray = ""
     with Browser(args=argumentParser()) as desktopBrowser:
         chrome = desktopBrowser.webdriver
