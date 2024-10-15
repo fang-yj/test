@@ -195,6 +195,7 @@ def argumentParser():
 
 if __name__ == "__main__":
     GITHUB_TOKEN = sys.argv[1]
+    print(GITHUB_TOKEN)
     fuzzy_users = ['tolinkshare','mksshare','abshare']
     # search_repo_names_through_fuzzy_users(fuzzy_users);
     repo_names = search_repo_names_by_updated_desc()
