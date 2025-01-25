@@ -71,7 +71,7 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
     global ERROR_TIME
     url = "https://github.com/search?q=v2ray%E8%AE%A2%E9%98%85&type=repositories&s=updated&o=desc"
     resp = req.get(url,SEARCH_HEADER)
-    print(f"status_code:{resp.status_code}")
+    # print(f"status_code:{resp.status_code}")
     repo_list = []
     # print(resp.status_code)
     if resp.status_code == 200:
@@ -80,7 +80,7 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
         script_text = json.loads(soup.find('script', attrs={"data-target":"react-app.embeddedData"}).get_text())
         # print(f"script_text:{script_text}")
         repo_list = script_text.get("payload").get("results")
-        print(f"repo_list:{repo_list}")
+        # print(f"repo_list:{repo_list}")
     # elif ERROR_TIME < 2:
     #     ERROR_TIME += 1
     #     time.sleep(random.randint(15, 30))
@@ -136,6 +136,7 @@ def repo_readme_to_v2ray_url(repo_names:list):
             v2ray_text = chrome.find_element(By.TAG_NAME,"body").text;
             # print(v2ray_text)
             if "403 Forbidden" in v2ray_text:
+                print(f"{v2ray_url} 无法访问")
                 continue
             v2ray += base64.b64decode(v2ray_text).decode("utf-8")
         # print(v2ray.split("\r\n"))
