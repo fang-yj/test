@@ -142,15 +142,17 @@ def repo_readme_to_v2ray_url(repo_names:list):
         # print(v2ray.split("\r\n"))
         desktopBrowser.closeBrowser()
     new_v2ray = v2ray.split("\r\n")
-    if os.path.exists("v2ray.txt"):
-        print("文件存在，判断要保存的内容是否更新，如果更新就保存")
-        old_v2ray = readFile("v2ray.txt")
-        if set(new_v2ray) != set(old_v2ray):
-            print("数据发生变更，更新数据并保存")
-            saveFile(new_v2ray,"v2ray.txt")
-    else:
-        print("文件不存在，直接创建 v2ray.txt 并保存")
-        saveFile(new_v2ray,"v2ray.txt")
+    print("保存文件")
+    saveFile(new_v2ray,"v2ray.txt")
+    # if os.path.exists("v2ray.txt"):
+        # print("文件存在，判断要保存的内容是否更新，如果更新就保存")
+        # old_v2ray = readFile("v2ray.txt")
+        # if set(new_v2ray) != set(old_v2ray):
+        #     print("数据发生变更，更新数据并保存")
+        #     saveFile(new_v2ray,"v2ray.txt")
+    # else:
+    #     print("文件不存在，直接创建 v2ray.txt 并保存")
+    #     saveFile(new_v2ray,"v2ray.txt")
 
 def saveFile(data: list, file_name: str):
     with open(file_name, "w", encoding="utf-8") as f:
