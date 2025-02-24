@@ -98,16 +98,23 @@ def search_repo_names_by_updated_desc(filter_words=[".github.io"])->list:
             repo_names.append(repo_name)
     return repo_names
 
-def repo_readme_to_v2ray_url(repo_names:list):
+# def repo_readme_to_v2ray_url(repo_names:list):
+def repo_readme_to_v2ray_url():
     """
         根据仓库名称获取readme.md，解析 readme.md 获取 v2ray 订阅链接，
         并将获取到的订阅信息保存到 v2ray.txt 中
         参数:
             repo_names: 仓库名称列表
     """
-    if len(repo_names) != 0:
-        saveFile(repo_names,"repo_names.txt")
-    elif os.path.exists("repo_names.txt"):
+    # if len(repo_names) != 0:
+    #     saveFile(repo_names,"repo_names.txt")
+    # elif os.path.exists("repo_names.txt"):
+    #     print("为查询到符合的仓库，使用备份的仓库名")
+    #     repo_names = readFile("repo_names.txt")
+    # else:
+    #     print("为查询到备份的仓库名，使用默认的仓库名")
+    #     repo_names = ["abshare/abshare.github.io","tolinkshare2/tolinkshare2.github.io","mksshare/mksshare.github.io"]
+    if os.path.exists("repo_names.txt"):
         print("为查询到符合的仓库，使用备份的仓库名")
         repo_names = readFile("repo_names.txt")
     else:
@@ -121,7 +128,7 @@ def repo_readme_to_v2ray_url(repo_names:list):
             url = f"https://raw.githubusercontent.com/{repo_name}/main/README.md"
             headers = {"accept": "application/vnd.github.v3+json",'user-agent':USER_AGENT}
             resp_text = req.get(url, headers).text
-            # print(resp_text)
+            print(resp_text)
             str_index = find_occurrences_regex(resp_text,"```")
             # print(resp_text[str_index[2]+3:str_index[3]])
             # 获取需要的 url
@@ -192,8 +199,9 @@ def argumentParser():
     return parser.parse_args()
 
 if __name__ == "__main__":
-    fuzzy_users = ['tolinkshare','mksshare']
+    # fuzzy_users = ['tolinkshare','mksshare']
     # search_repo_names_through_fuzzy_users(fuzzy_users);
-    repo_names = search_repo_names_by_updated_desc()
-    repo_readme_to_v2ray_url(repo_names)
+    # repo_names = search_repo_names_by_updated_desc()
+    # repo_readme_to_v2ray_url(repo_names)
+    repo_readme_to_v2ray_url()
     # print(readFile("v2ray.txt"))
